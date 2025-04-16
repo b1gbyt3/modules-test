@@ -52,9 +52,15 @@
                     const response = await fetch(request);
                     if (response.ok) {
                         const text = await response.text();
-                        await new Promise(resolve => setTimeout(resolve, 120));
-                        await navigator.clipboard.writeText(text);
-                        alert("Document copied to clipboard.");
+                        try {
+                            await navigator.clipboard.writeText(text);
+                            alert("The source document is copied to the clipboard.");
+                        } catch (clipboardError) { 
+                            // APPLE TAX
+                            await new Promise(resolve => setTimeout(resolve, 100));
+                            await navigator.clipboard.writeText(text);
+                            alert("The source document is copied to the clipboard.");
+                        }
                     } else {
                         throw new Error(`Failed to fetch document: ${response.status}`);
                     }
