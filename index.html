@@ -187,38 +187,52 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.10.0/languages/javascript.min.js"></script>
 
 <script defer>
-    document.getElementById("copyRawMd").addEventListener("click", async event => {
-        if (!navigator.clipboard || !navigator.clipboard.writeText) {
-    console.warn("Clipboard API (navigator.clipboard.writeText) is not available in this browser.");
-    alert("Error: Clipboard access is not supported or enabled in this browser.");
-    return;
-}
-let markdownContent;
-try {
-    console.log("Fetching markdown content...");
+    document.getElementById("copyRawMd").addEventListener("click", async () => {
     const requestUrl = "https://raw.githubusercontent.com/proftak/modules/refs/heads/main/0383/mdModule.md";
-    const request = new Request(requestUrl);
-    const response = await fetch(request);
-    if (!response.ok) {
-        throw new Error(`HTTP error fetching content! Status: ${response.status}`);
+    let markdownContent;
+    let copySuccess = false;
+    try {
+        const request = new Request(requestUrl);
+        const response = await fetch(request);
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        markdownContent = await response.text();
+    } catch (err) {
+        console.error("Failed to fetch markdown content:", err);
+        alert("Error: Could not download the source document content.");
+        return;
     }
-    markdownContent = await response.text();
-    console.log("Fetch successful.");
 
-} catch (err) {
-    console.error("Failed to fetch markdown content:", err);
-    alert("Error: Could not download the source document content. Please check the URL or your network connection.");
-    return;
-}
-try {
-    console.log("Attempting to copy content to clipboard...");
-    await navigator.clipboard.writeText(markdownContent);
-    alert("The source document has been copied to the clipboard.");
-    console.log("Content successfully copied to clipboard.");
-} catch (err) {
-    console.error("Clipboard write failed:", err);
-    alert("Error: Could not copy the document to the clipboard. This might be due to browser permissions, the page not being served over HTTPS, or the document not being focused.");
-}
+    try {
+        if (typeof ClipboardItem && navigator.clipboard.write) {
+            const blob = new Blob([markdownContent], { type: "text/plain" });
+            const item = new ClipboardItem({ "text/plain": blob });
+            await navigator.clipboard.write([item]);
+            copySuccess = true;
+            console.log("Clipboard write successful using ClipboardItem.");
+        }
+        else if (navigator.clipboard && navigator.clipboard.writeText) {
+             console.log("ClipboardItem API not used/failed, trying writeText...");
+             await navigator.clipboard.writeText(markdownContent);
+             copySuccess = true;
+             console.log("Clipboard write successful using writeText.");
+        }
+        else {
+             throw new Error("Clipboard API not supported in this browser.");
+        }
+
+    } catch (err) {
+
+        console.error("Clipboard write failed:", err);
+        copySuccess = false;
+    }
+
+    if (copySuccess) {
+        alert("The source document has been copied to the clipboard.");
+    } else {
+        alert("Error: Could not copy the document to the clipboard.");
+    }
     })
    
 </script>
