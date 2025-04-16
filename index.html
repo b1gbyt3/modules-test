@@ -193,10 +193,10 @@
         try {
             let request = new Request(documentUrl);
             const response = await fetch(request);
+            await new Promise(resolve => setTimeout(resolve, 100));
             if (!response.ok) {
                 throw new Error(`Failed to fetch document: ${response.status}`);
             }
-            await new Promise(resolve => setTimeout(resolve, 100));
             await navigator.clipboard.writeText(text);
             alert("Document copied to clipboard.");
         } catch (err) {
