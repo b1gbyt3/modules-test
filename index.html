@@ -199,7 +199,7 @@
             const text = await response.text();
 
             // It's because activation expires: https://webkit.org/blog/13862/the-user-activation-api/
-            // await new Promise(resolve => setTimeout(resolve, 100));
+            await new Promise(resolve => setTimeout(resolve, 100));
             
             await navigator.clipboard.writeText(text);
             alert("The source document has been copied to the clipboard.");
