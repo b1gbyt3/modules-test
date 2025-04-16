@@ -190,23 +190,24 @@
 
      async function copyRawMd() {
         const documentUrl = "https://raw.githubusercontent.com/proftak/modules/refs/heads/main/0383/mdModule.md";
-        try {
-            let request = new Request(documentUrl);
-            let response = await fetch(request);
-            if (response.ok) {
-                let text = await response.text();
-                await new Promise(resolve => setTimeout(resolve, 120));
-                await navigator.clipboard.writeText(text);
-                alert("Document copied to clipboard.");
-            } else {
-                throw new Error(`Failed to fetch document: ${response.status}`);
+            try {
+                const request = new Request(documentUrl);
+                const response = await fetch(request);
+                if (response.ok) {
+                    const text = await response.text();
+                    await new Promise(resolve => setTimeout(resolve, 120));
+                    await navigator.clipboard.writeText(text);
+                    alert("Document copied to clipboard.");
+                } else {
+                    throw new Error(`Failed to fetch document: ${response.status}`);
+                }
+            } catch (err) {
+                console.error("An error:", err);
+                alert("Copy failed. Opening document source.");
+                window.open(documentUrl, "_blank");
             }
-        } catch (err) {
-            console.error("An error:", err);
-            alert("Copy failed. Opening document source.");
-            window.open(documentUrl, "_blank");
-        }
     }
+
 </script>
     
     <script src="https://proftak.github.io/modules/highlight/highlight.min.js">
