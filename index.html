@@ -165,7 +165,7 @@
             <a href="https://github.com/proftak/modules/edit/main/0383/mdModule.md">Improve this page by contributing and editing </a>, <br />
             or <a href="https://github.com/proftak/modules">create an issue or participate in a discussion.</a> <br />
             or <a href="https://github.com/proftak/modules/blob/main/0383/mdModule.md">View the source document.</a><br />
-            <button id="copyRawMd">Click to copy source to clipboard.</button>
+            <button onclick="copyRawMd()">Click to copy source to clipboard.</button>
         </div>
         
     </div>
@@ -186,29 +186,16 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.10.0/languages/c.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.10.0/languages/javascript.min.js"></script>
 
-<script defer>
-    document.getElementById("copyRawMd").addEventListener("click", async () => {
-        try {
-        
-            const requestUrl = "https://raw.githubusercontent.com/proftak/modules/refs/heads/main/0383/mdModule.md";
-            const request = new Request(requestUrl);
-            const response = await fetch(request);
-            if (!response.ok) {
-                throw new Error(`HTTP error! Status: ${response.status}`);
-            }
-            const text = await response.text();
+<script>
 
-            // It's because activation expires: https://webkit.org/blog/13862/the-user-activation-api/
+     async function copyRawMd() {
+            let request = new Request("https://raw.githubusercontent.com/proftak/modules/refs/heads/main/0383/mdModule.md");
+            let content = await fetch(request);
+            let text = await content.text()
             await new Promise(resolve => setTimeout(resolve, 100));
-            
             await navigator.clipboard.writeText(text);
-            alert("The source document has been copied to the clipboard.");
-        } catch (err) {
-            console.error("Operation failed:", err);
-            alert("Error: Could not fetch or copy the content.");
+            alert("The source document is copied to the clipboard.")
         }
-    })
-   
 </script>
     
     <script src="https://proftak.github.io/modules/highlight/highlight.min.js">
