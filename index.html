@@ -192,11 +192,14 @@
         const documentUrl = "https://raw.githubusercontent.com/proftak/modules/refs/heads/main/0383/mdModule.md";
         try {
             let request = new Request(documentUrl);
-            const response = await fetch(request);
-            await new Promise(resolve => setTimeout(resolve, 120));
+            let response = await fetch(request);
             if (response.ok) {
+                let text = await response.text();
+                await new Promise(resolve => setTimeout(resolve, 120));
                 await navigator.clipboard.writeText(text);
                 alert("Document copied to clipboard.");
+            } else {
+                throw new Error(`Failed to fetch document: ${response.status}`);
             }
         } catch (err) {
             console.error("An error:", err);
