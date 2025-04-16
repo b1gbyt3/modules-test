@@ -2,24 +2,7 @@
 <html lang="en-US">
 
 <head>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/mermaid/11.4.0/mermaid.min.js"></script>
-
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css" integrity="sha384-yFRtMMDnQtDRO8rLpMIKrtPCD5jdktao2TV19YiZYWMDkUR5GQZR/NOVTdquEx1j" crossorigin="anonymous">
-    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.js" integrity="sha384-9Nhn55MVVN0/4OFx7EE5kpFBPsEMZxKTCnA+4fqDmg12eCTqGi6+BB2LjY8brQxJ" crossorigin="anonymous"></script>
-    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/auto-render.min.js" integrity="sha384-kWPLUVMOks5AQFrykwIup5lo0m3iMkkHrD0uJ4H5cjeGihAutqP0yW0J6dpFiVkI" crossorigin="anonymous" onload="renderMathInElement(document.body);"></script>
-    <script>
-        window.MathJax = {
-            tex: {
-                inlineMath: [
-                    ['$', '$'],
-                    ['\\(', '\\)']
-                ]
-            }
-        };
-    </script>
-    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
-    </script>
-
+    
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1"> 
@@ -37,154 +20,20 @@
 <meta property="twitter:title" content="Module 0383: TTP" />
 <script type="application/ld+json">
 {"@context":"https://schema.org","@type":"WebPage","author":{"@type":"Person","name":"Tak Auyeung"},"headline":"Module 0383: TTP","url":"https://proftak.github.io/modules/0383/mdModule.html"}</script>
-<!-- End Jekyll SEO tag -->
-
-    <link rel="stylesheet" href="/modules/assets/css/style.css?v=c8d3a93c3ad4e058104e6c3d61fdea5dfc365436"> 
-    <!-- start custom head snippets, customize with your own _includes/head-custom.html file -->
-
-<!-- Setup Google Analytics -->
-
-
-
-<!-- You can set your favicon here -->
-<!-- link rel="shortcut icon" type="image/x-icon" href="/modules/favicon.ico" -->
-
-<!-- end custom head snippets -->
-
-    <style>
-        code { background-color: lightgray; }
-        .task-list-item { list-style-type: none }
-    </style>
 </head>
 
 <body>
-    <script>
-        function insertInplace(element)
-            {
-                let whoAmI = document.scripts[document.scripts.length-1] // the last script element inserted
-                whoAmI.insertAdjacentElement('afterend', element)
-            }
-    </script>
-    <div class="container-lg px-3 my-5 markdown-body">
-        
-        <!-- <h1><a href="https://proftak.github.io/modules/">modules</a></h1> -->
-        
-        <div id="title" markdown="1" style="font-weight: bold;">Module 0383: TTP</div>
-        <ul><li><a href="#main-sections-of-ttp">Main sections of TTP</a><ul><li><a href="#the-register-bank">The register bank</a></li><li><a href="#the-alu">The <code>ALU</code></a></li><li><a href="#the-controller">The controller</a></li><li><a href="#ram">RAM</a></li></ul></li><li><a href="#registers-that-are-not-software-addressable">Registers that are not software addressable</a></li><li><a href="#how-to-understand-operations-of-ttp">How to understand operations of TTP</a><ul><li><a href="#the-phases-of-executing-an-opcode">The phases of executing an opcode</a><ul><li><a href="#fetch">Fetch</a></li><li><a href="#decode">Decode</a></li><li><a href="#execute">Execute</a></li></ul></li></ul></li></ul> 
-        <h1 id="main-sections-of-ttp">Main sections of TTP</h1>
 
-<p><img src="/modules/0383/ttp.png" alt="The overall circuit of TTP" /></p>
-
-<h2 id="the-register-bank">The register bank</h2>
-
-<p><img src="/modules/0383/regbank.png" alt="The register bank `regBank`" /></p>
-
-<p>The register bank (sub-circuit <code>regBank</code>) houses four <em>software addressable</em> registers. This means these four registers, labeled register A to register D in TTPASM, can be specified explicitly in opcodes. The register bank can update one of the four registers, and connect up to two of the registers to the output of the register bank.</p>
-
-<p>Look into the <code>regBank</code> circuit, and understand how it operates. Specifically, figure out the following:</p>
-
-<ul>
-  <li>How to specify a register to update on the next rising edge.</li>
-  <li>How to specify which register connects to which output of <code>regBank</code>. There are two outputs.</li>
-</ul>
-
-<h2 id="the-alu">The <code>ALU</code></h2>
-
-<p><img src="/modules/0383/alu.png" alt="The `ALU`" /></p>
-
-<p>The <code>ALU</code> (arithmetic and logic unit) is responsible for computations and “logic.” Logic, in this case, is merely determining some elementary conditions, such as whether the minuend is less than the subtrahend in a subtraction, or whether the result of an operation is zero.</p>
-
-<p>The <code>ALU</code> itself does not provide values to computations, nor does it store the results of computations. In TTP, registers are used to supply data for computations, as well as to store results of computations.</p>
-
-<p>In the circuit of the <code>ALU</code>, there are many multiplexers and demultiplexers to route values needed for computations and results from computations. Track down how this routing is specified by the input pins of the <code>ALU</code>. Furthermore, track down the outputs of the <code>ALU</code>, and backtrack to figure out what each output represents. This is particularly important for the bits related to <code>flagsIn</code> and <code>flagsOut</code>.</p>
-
-<h2 id="the-controller">The controller</h2>
-
-<p><img src="/modules/0383/controller.png" alt="The controller" /></p>
-
-<p>The controller is the lower portion in the TTP, centering around the only ROM component.</p>
-
-<p>The controller is responsible for the coordination of all the other parts of TTP to perform actual operations.</p>
-
-<h2 id="ram">RAM</h2>
-
-<p>Technically, the RAM component is not a part of TTP. In reality, RAM is often outside of the die of a processor because it takes up more spaces. However, the are processor chips that include RAM when the amount of RAM can be combined to the same die.</p>
-
-<p>RAM is used to store/supply opcodes, this is the main idea of a von Neumann architecture. However, RAM is also used to store global variables, as well as the stack.</p>
-
-<h1 id="registers-that-are-not-software-addressable">Registers that are not software addressable</h1>
-
-<p>TTP has a few registers that are not software addressable. This means that these registers cannot be directly accessed by opcodes.</p>
-
-<ul>
-  <li><code>ucodePtr</code>: the microcode pointer is a register that connects to the ROM component. This register is at the core of controller part of TTP. Of all the registers, <code>ucodePtr</code> is the only one that is sensitive to a falling edge instead of a rising edge.</li>
-  <li><code>PC</code>: the program counter stores the address in RAM (not ROM) of where to find the <em>next</em> opcode.</li>
-  <li><code>flags</code>: the flags register stores the carry, zero, overflow, sign, and less-than flags from the ALU from the most recent ALU operation. These flags can, then, be utilized by conditional branch instructions.</li>
-  <li><code>InstructionReg</code>: the instruction register temporarily stores a copy of the opcode in RAM that is pointed to by <code>PC</code>, which is then used to update <code>ucodePtr</code> to “decode” an opcode.</li>
-</ul>
-
-<h1 id="how-to-understand-operations-of-ttp">How to understand operations of TTP</h1>
-
-<p>At first glance, TTP looks like a big mess with wires and tunnels everywhere. However, there is a structure method to gain an understanding of how it gets work done.</p>
-
-<h2 id="the-phases-of-executing-an-opcode">The phases of executing an opcode</h2>
-
-<h3 id="fetch">Fetch</h3>
-
-<p>When <code>ucodePtr==0</code> on a rising edge, <code>InstructionReg=*PC</code>, and this is called the fetch cycle/phase of executing an opcode. You may want to examine location 0 of the ROM, and see how registers are enabled, how RAM is enabled, and how multiplexers and demultiplexers are configured to accomplish the RTL (register transfer language) description <code>InstructionReg=*PC</code>.</p>
-
-<p><em>Sort of</em> part of the fetch cycle, when <code>ucodePtr==1</code> on a rising edge, <code>PC=PC+1</code> to autoincrement the program counter for the next opcode. Again, it is useful to understand how the D port of ROM controls a multiplexer to specify this behavior.</p>
-
-<h3 id="decode">Decode</h3>
-
-<p>When <code>ucodePtr==1</code> on a falling edge, <code>ucodePtr=InstructionReg &lt;&lt; 4</code>. Track down the circuit to find out how this is accomplished by a splitter, a multiplexer, and the corresponding bits from the D port of ROM.</p>
-
-<p>After decode, <code>ucodePtr</code> points to a specific location in ROM. The content at this location of ROM is presented to the D port of ROM.</p>
-
-<h3 id="execute">Execute</h3>
-
-<p>There is no easy way to describe what happens in the execute cycle/phase of executing an opcode because this part depends on the opcode. The ROM allocates 16 microcode slices (locations in ROM) per opcode. However, most opcodes can be accomplished by two microcode slices. Every opcode needs the last microcode slice to reset <code>ucodePtr</code> to zero.</p>
-
-<p>To analyze a specific microcode slice of a specific opcode:</p>
-
-<ul>
-  <li>Start with the <em>active components</em>. Find out which of the following are in use: <code>regBank</code>, <code>ALU</code>, <code>PC</code>, <code>RAM</code>. These components have specific ports that can help indicate whether they are in use or not.</li>
-  <li>If a component is active, figure out what it needs as input, and its output.
-    <ul>
-      <li>Then track down the input to find out where it comes from. This often means running into multiplexers and demultiplexers. You will need to examine the select port of each multiplexer/demultiplexer and find out how the component does as a switch.</li>
-      <li>Also track down the output to find how what component utilizes the output. In seldom cases, the output may be ignored and no component uses the output.</li>
-    </ul>
-  </li>
-</ul>
-
-<p>In simpler terms, to understand what a microcode slice does, first determine the active components used, then find out how these components are routed to each other.</p>
- 
         
         <div class="footer border-top border-gray-light mt-5 pt-3 text-right text-gray">
             This site is licensed under <a href=https://creativecommons.org/licenses/by-nc-sa/4.0/>Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International 🅭🅯🄏🄎</a>. <br />
             <a href="https://github.com/proftak/modules/edit/main/0383/mdModule.md">Improve this page by contributing and editing </a>, <br />
             or <a href="https://github.com/proftak/modules">create an issue or participate in a discussion.</a> <br />
             or <a href="https://github.com/proftak/modules/blob/main/0383/mdModule.md">View the source document.</a><br />
+            <br/>
+            <br/>
             <button onclick="copyRawMd()">Click to copy source to clipboard.</button>
         </div>
-        
-    </div>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/4.1.0/anchor.min.js" integrity="sha256-lZaRhKri35AyJSypXXs4o6OPFTbTmUoltBbDCbdzegg=" crossorigin="anonymous"></script>
-    <script>
-        anchors.add();
-        anchors.add('h1'); // explicitly because h1 bookmarks do not seem to get visual links
-        // anchors.add('span'); 
-    </script>
-    <script type="module">
-        var config = { startOnLoad:true, flowchart:{ useMaxWidth:true, htmlLabels:true } }; 
-        mermaid.initialize(config); 
-        window.mermaid.init(undefined, document.querySelectorAll('.language-mermaid'));
-    </script>
-    <link rel="stylesheet" href="https://proftak.github.io/modules/highlight/highlight.css">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.10.0/highlight.min.js"></script>
-<!-- and it's easy to individually load additional languages -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.10.0/languages/c.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.10.0/languages/javascript.min.js"></script>
 
 <script>
 
@@ -210,22 +59,6 @@
 
 </script>
     
-    <script src="https://proftak.github.io/modules/highlight/highlight.min.js">
-    </script>
-    <script>hljs.highlightAll();</script>
-    <script>
-        if (document.querySelector('#title').innerHTML == "")
-        {
-            document.querySelector('#title').innerHTML = document.title
-        }
-    </script>
-    <script>
-        const checkboxes = document.querySelectorAll('input[type="checkbox"]');
-        checkboxes.forEach(checkbox => {
-          // remove the disabled attribute; added by kramdown by default
-            checkbox.removeAttribute('disabled');
-        });
-    </script>
 
 </body>
 
